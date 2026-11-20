@@ -1,6 +1,6 @@
 [package]
 name = "app_limiter"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2021"
 description = "Windows 按进程上传/下载限速工具（WinDivert 版）"
 

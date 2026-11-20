@@ -66,7 +66,7 @@ checksum = "fc7eb209b1518d6bb87b283c20095f5228ecda460da70b44f0802523dea6da04"
 
 [[package]]
 name = "app_limiter"
-version = "0.1.0"
+version = "1.0.0"
 dependencies = [
  "ctrlc",
  "eframe",
