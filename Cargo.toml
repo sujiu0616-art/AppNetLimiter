@@ -1,0 +1,55 @@
+[package]
+name = "app_limiter"
+version = "0.1.0"
+edition = "2021"
+description = "Windows 按进程上传/下载限速工具（WinDivert 版）"
+
+# 产物名（对外显示/文件名）：AppNetLimiter.exe
+# 包名保持 app_limiter 不变，避免改动内部模块与日志标识
+[[bin]]
+name = "AppNetLimiter"
+path = "src/main.rs"
+
+[dependencies]
+# WinDivert 安全封装（提供 flags/layer/shutdown 枚举与错误类型透传）
+windivert = "0.6"
+# windivert 同项目的原始 FFI 层：
+# 安全封装的 recv/send 虽是 &self，但 shutdown/close 需要 &mut self，
+# 与"抓包线程 + 调度线程共享句柄 + Ctrl+C 优雅退出"冲突，
+# 故句柄生命周期直接用 sys 层管理（C API 本身线程安全）。
+windivert-sys = "0.10"
+# windivert-sys 0.10 内部依赖 windows 0.48 的 HANDLE 类型，
+# 显式引同一版本避免类型不匹配（与下面 0.62 共存于依赖树）
+windows48 = { package = "windows", version = "0.48", features = ["Win32_Foundation"] }
+# Windows API：GetExtendedTcpTable / GetExtendedUdpTable / 进程名查询 / 线程优先级 / 定时器精度
+windows = { version = "0.62", features = [
+    "Win32_Foundation",
+    "Win32_Media",
+    "Win32_NetworkManagement_IpHelper",
+    "Win32_Networking_WinSock",
+    "Win32_System_Threading",
+] }
+# Ctrl+C 优雅退出
+ctrlc = "3.5"
+# GUI（第三步）：glow 渲染器（编译快、体积小、老 GPU 兼容）
+# 注意：0.36+ 重构了整个 App/面板 API（update→ui、面板收 &mut Ui），这里用经典 API 的 0.28
+eframe = { version = "0.28", default-features = false, features = ["default_fonts", "glow"] }
+# 表格控件（与 eframe 同版本号发布）
+egui_extras = { version = "0.28", default-features = false }
+# 配置持久化
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# 窗口图标：解码 assets/app.ico（含 PNG 帧，GDI 不解，image 可以）
+image = { version = "0.25", default-features = false, features = ["ico", "png"] }
+
+[build-dependencies]
+# 把 app.manifest 嵌入 exe（请求管理员权限）
+embed-resource = "3"
+
+# 减小体积：最大压缩 + LTO + 去符号 + 去 unwind
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+strip = true
+panic = "abort"

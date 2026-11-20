@@ -1,0 +1,16 @@
+# 构建产物
+/target/
+
+# 本地工具产生的评审/历史记录
+/.mimosa/
+
+# 旧版二进制备份
+*.bak
+
+# 本机进程统计导出（个人数据，不入库）
+game4.txt
+
+# WinDivert 官方发行包里只保留编译/运行需要的东西
+WinDivert/WinDivert-2.2.2-A.zip
+WinDivert/WinDivert-2.2.2-A/x86/
+WinDivert/WinDivert-2.2.2-A/x64/*.exe

@@ -1,0 +1,5 @@
+// 程序图标（exe 资源）：多尺寸 ico，Windows 会按需取帧
+1 ICON "assets\\app.ico"
+
+// 管理员权限 manifest（UAC）
+1 24 "app.manifest"
